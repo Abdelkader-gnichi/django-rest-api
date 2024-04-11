@@ -5,26 +5,24 @@ from products.serializers import ProductSerializer
 from django.forms.models import model_to_dict
 # Create your views here.
 
-@api_view(['GET'])
+@api_view(['POST'])
 def api_home(request, *args, **kwargs):
     '''\
        this is a DRF API view
     '''
-    random_instance = Product.objects.all().order_by('?').first()
-    data= {}
-    if random_instance:
-        serializer= ProductSerializer(random_instance, many=False)
-        data = serializer.data
-
+    
     '''\
-        this code bellow will work but will not shows or returns the sale_price
-        property that is declared in the product models so here we need to use
-        DRF serializers.
-    '''
-    # if random_product:
-    #     data = model_to_dict(random_product, fields=['id','price', 'sale_price']) 
+        the serializer is used for validating the request data if it is matching
+        the serializer requirements then the model requirements and/or to save
+        the request data into the database.
 
-    return Response(data)
+        if we don't use the save method then we only validating the request data 
+        without saving anything into the database.
+    '''
+    serializer = ProductSerializer(data= request.data)
+    if serializer.is_valid(raise_exception=True): # raise_exception it's like serializer.errors
+        # instance = serializer.save()s
+        return Response(serializer.data)
 
     
 
